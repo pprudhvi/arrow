@@ -19,10 +19,11 @@
 
 set -e
 
-CPP_BUILD_DIR=$TRAVIS_BUILD_DIR/dist/
+CPP_BUILD_DIR=$GITHUB_WORKSPACE/arrow/dist/
+echo $CPP_BUILD_DIR
 
 pushd java
-  if [ $TRAVIS_OS_NAME == "linux" ]; then
+  if [[ $OS_NAME == "linux" ]]; then
     SO_DEP=ldd
     GANDIVA_LIB="$CPP_BUILD_DIR"libgandiva_jni.so
     WHITELIST=(linux-vdso libz librt libdl libpthread libstdc++ libm libgcc_s libc ld-linux-x86-64)
