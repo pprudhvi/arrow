@@ -69,4 +69,48 @@ class InHolder<std::string> {
   const std::unordered_set<std::string> values_;
 };
 
+template <>
+class InHolder<int32_t> {
+ public:
+  explicit InHolder(const std::unordered_set<int32_t>& values) {
+    values_.max_load_factor(0.25f);
+    for (auto& value : values) {
+      values_.insert(value);
+    }
+  }
+
+  bool HasValue(int32_t value) const { return values_.count(value) == 1; }
+
+ private:
+  struct simple_int32_hash {
+   public:
+    std::size_t operator()(int32_t v) const {
+      return arrow::internal::ScalarHelper<int32_t, 0>::ComputeHash(v);
+    }
+  };
+  std::unordered_set<int32_t, simple_int32_hash> values_;
+};
+
+template <>
+class InHolder<int64_t> {
+ public:
+  explicit InHolder(const std::unordered_set<int64_t>& values) {
+    values_.max_load_factor(0.25f);
+    for (auto& value : values) {
+      values_.insert(value);
+    }
+  }
+
+  bool HasValue(int64_t value) const { return values_.count(value) == 1; }
+
+ private:
+  struct simple_int64_hash {
+   public:
+    std::size_t operator()(int64_t v) const {
+      return arrow::internal::ScalarHelper<int64_t, 0>::ComputeHash(v);
+    }
+  };
+  std::unordered_set<int64_t, simple_int64_hash> values_;
+};
+
 }  // namespace gandiva
